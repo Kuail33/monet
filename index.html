@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthMark | Digital Identity Protection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,125,100..900;1,125,100..900&family=Chivo:wght@300&family=Instrument+Serif:italic@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hex-bg: #F7F6F4;
+            --hex-text-main: #121317;
+            --hex-text-secondary: #2B2D33;
+            --hex-text-muted: #6B6F76;
+            --hex-border: rgba(0, 0, 0, 0.06);
+            --hex-accent-soft: #F6EAEA;
+            --hex-accent-border: #E5BABA;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--hex-bg);
+            color: var(--hex-text-main);
+            overflow-x: hidden;
+            /* Subtle noise texture */
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+                radial-gradient(#d1d5db 0.5px, transparent 0.5px);
+            background-size: 200px 200px, 24px 24px;
+            background-blend-mode: overlay, normal;
+        }
+        .serif-italic {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+        }
+        .extended-bold {
+            font-family: 'Archivo', sans-serif;
+            font-stretch: 125%;
+            font-weight: 800;
+        }
+        .cinetype-light {
+            font-family: 'Chivo', sans-serif;
+            font-weight: 300;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .hex-card {
+            background: #ffffff;
+            border: 1px solid var(--hex-border);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hex-card:hover {
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+        .btn-bracket {
+            position: relative;
+            padding: 10px 28px;
+            background: var(--hex-accent-soft);
+            color: var(--hex-text-main);
+            font-weight: 500;
+            font-size: 14px;
+            border: 1px solid var(--hex-border);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .btn-bracket:hover {
+            background: #fff;
+            border-color: var(--hex-accent-border);
+        }
+        
+        /* Bracket Decorations */
+        .btn-bracket-container::before, .btn-bracket-container::after, 
+        .corner-bottom-left, .corner-bottom-right {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-color: var(--hex-accent-border);
+            opacity: 0.4;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .btn-bracket-container::before { top: -6px; left: -6px; border-left: 1px solid; border-top: 1px solid; }
+        .btn-bracket-container::after { top: -6px; right: -6px; border-right: 1px solid; border-top: 1px solid; }
+        .corner-bottom-left { bottom: -6px; left: -6px; border-left: 1px solid; border-bottom: 1px solid; }
+        .corner-bottom-right { bottom: -6px; right: -6px; border-right: 1px solid; border-bottom: 1px solid; }
+
+        .btn-wrapper:hover .btn-bracket-container::before,
+        .btn-wrapper:hover .btn-bracket-container::after,
+        .btn-wrapper:hover .corner-bottom-left,
+        .btn-wrapper:hover .corner-bottom-right {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--hex-text-secondary);
+            opacity: 0.75;
+            transition: opacity 0.2s;
+        }
+        .nav-link:hover {
+            opacity: 1;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

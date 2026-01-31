@@ -1,0 +1,7 @@
+{
+  "name": "AuthMark - Digital Identity Protection",
+  "description": "A cutting-edge platform for creators to embed invisible, tamper-resistant proof of authorship into their digital works using AI-powered verification.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
