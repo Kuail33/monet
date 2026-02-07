@@ -1,6 +1,4 @@
-
 import React from 'react';
-
 export const APP_NAME = "monet";
 export const MOCK_USER = {
   uid: "usr_7x9p2",

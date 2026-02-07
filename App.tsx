@@ -8,11 +8,14 @@ import { Icons, MOCK_USER } from './constants';
 import { embedWatermark, verifyFile } from './services/watermarkService';
 import { generateVerificationReport } from './services/geminiService';
 import { AssetRecord, VerificationResult, Verdict, VerificationHistoryItem } from './types';
+import { auth } from './services/firebaseConfig';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('landing');
   const [activeDashboardView, setActiveDashboardView] = useState<'signed' | 'forensics'>('signed');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [assets, setAssets] = useState<AssetRecord[]>([]);
   const [verificationHistory, setVerificationHistory] = useState<VerificationHistoryItem[]>([]);
@@ -21,13 +24,37 @@ export default function App() {
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Auto-clear error after 5 seconds
+  // Track Firebase authentication state
   useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(null), 5000);
-      return () => clearTimeout(timer);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+        setIsLoggedIn(true);
+      } else {
+        setCurrentUser(null);
+        setIsLoggedIn(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveTab('landing');
+      setError(null);
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Push state when tab changes
+  useEffect(() => {
+    if (activeTab !== 'landing') {
+      window.history.pushState({ tab: activeTab }, '', window.location.pathname);
     }
-  }, [error]);
+  }, [activeTab]);
 
   const handleLoginTrigger = () => {
     if (isLoggedIn) {
@@ -37,12 +64,18 @@ export default function App() {
     }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setActiveTab('landing');
-    setLastProtected(null);
-    setVerificationResult(null);
-    setError(null);
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setIsLoggedIn(false);
+      setCurrentUser(null);
+      setActiveTab('landing');
+      setLastProtected(null);
+      setVerificationResult(null);
+      setError(null);
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
   };
 
   const completeLogin = () => {
@@ -130,7 +163,7 @@ export default function App() {
           <Icons.AlertTriangle />
           <p className="text-sm font-medium text-red-800">{error}</p>
         </div>
-        <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 transition-colors">
+        <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 transition-colors ease-in">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
@@ -145,9 +178,9 @@ export default function App() {
           setActiveTab('landing');
           setError(null);
         }}
-        className="flex items-center gap-2 text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.2em] hover:text-[#121317] transition-colors mb-8 group"
+        className="flex items-center gap-2 text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.2em] hover:text-[#121317] transition-colors ease-in mb-8 group"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform ease-in">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -160,7 +193,8 @@ export default function App() {
     <Layout 
       activeTab={activeTab} 
       setActiveTab={setActiveTab} 
-      isLoggedIn={isLoggedIn} 
+      isLoggedIn={isLoggedIn}
+      currentUser={currentUser}
       onLogin={handleLoginTrigger}
       onLogout={handleLogout}
       onSelectDashboardView={setActiveDashboardView}
@@ -176,20 +210,21 @@ export default function App() {
       {activeTab === 'landing' && (
         <LandingPage 
           onStart={setActiveTab} 
-          onLogin={handleLoginTrigger} 
+          onLogin={handleLoginTrigger}
+          isLoggedIn={isLoggedIn}
         />
       )}
 
       {activeTab === 'protect' && isLoggedIn && (
-        <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in duration-500">
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold tracking-tight text-[#121317]">Sign Work</h2>
+        <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in slide-in-from-top-4 duration-700 ease-in">
+          <div className="text-center space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-100">
+            <h2 className="text-4xl font-bold tracking-tight text-[#121317]"> Seal your work </h2>
             <p className="text-[#6B6F76] text-lg font-medium">Embed a cryptographic identity marker into your binary data.</p>
           </div>
 
           {renderError()}
 
-          <div className={`hex-card p-1 border-dashed border-2 transition-all relative cursor-pointer group ${isProcessing ? 'opacity-50 pointer-events-none' : 'border-black/5 hover:border-black/20'}`}>
+            <div className={`hex-card p-1 border-dashed border-2 transition-all ease-in relative cursor-pointer group animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-200 ${isProcessing ? 'opacity-50 pointer-events-none' : 'border-black/5 hover:border-black/20'}`}>
             <input 
               type="file" 
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -197,7 +232,7 @@ export default function App() {
               disabled={isProcessing}
             />
             <div className="p-24 text-center space-y-8">
-              <div className="w-16 h-16 bg-[#F7F6F4] border border-black/5 rounded-2xl flex items-center justify-center mx-auto text-[#121317] group-hover:scale-105 transition-transform">
+              <div className="w-16 h-16 bg-[#F7F6F4] border border-black/5 rounded-2xl flex items-center justify-center mx-auto text-[#121317] group-hover:scale-105 transition-transform ease-in">
                 <Icons.Upload />
               </div>
               <div className="space-y-2">
@@ -217,18 +252,18 @@ export default function App() {
           )}
 
           {lastProtected && !isProcessing && (
-            <div className="hex-card p-10 animate-in fade-in zoom-in-95 duration-500">
-              <div className="flex flex-col sm:flex-row gap-8 items-center">
-                <div className="w-16 h-16 bg-green-50 text-green-700 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="hex-card p-10 animate-in fade-in slide-in-from-bottom-4 zoom-in-95 duration-700 ease-in">
+              <div className="flex flex-col sm:flex-row gap-8 items-center animate-in fade-in duration-500 ease-in delay-100">
+                <div className="w-16 h-16 bg-green-50 text-green-700 rounded-full flex items-center justify-center flex-shrink-0 animate-in zoom-in-95 duration-400 ease-in delay-200">
                   <Icons.CheckCircle />
                 </div>
-                <div className="space-y-8 flex-1 text-center sm:text-left">
-                  <div>
+                <div className="space-y-8 flex-1 text-center sm:text-left animate-in fade-in slide-in-from-right-2 duration-500 ease-in delay-300">
+                  <div className="animate-in fade-in duration-400 ease-in delay-400">
                     <h3 className="text-2xl font-bold text-[#121317]">Asset Secured</h3>
                     <p className="text-sm text-[#6B6F76] mt-1 font-medium">Forensic ID: <span className="mono font-semibold text-[#121317]">{lastProtected.watermarkId}</span></p>
                   </div>
                   
-                  <div className="flex flex-wrap gap-4 justify-center sm:justify-start">
+                    <div className="flex flex-wrap gap-4 justify-center sm:justify-start animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-500">
                     <div className="btn-wrapper relative">
                       <div className="btn-bracket-container">
                         <a 
@@ -251,15 +286,15 @@ export default function App() {
       )}
 
       {activeTab === 'verify' && (
-        <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in duration-500">
-          <div className="text-center space-y-4">
+        <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in slide-in-from-top-4 duration-700 ease-in">
+          <div className="text-center space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-100">
             <h2 className="text-4xl font-bold tracking-tight text-[#121317]">Verify Forensic</h2>
             <p className="text-[#6B6F76] text-lg font-medium">Extract markers and audit content for modifications.</p>
           </div>
 
           {renderError()}
 
-          <div className={`hex-card p-1 border-dashed border-2 transition-all relative cursor-pointer group ${isProcessing ? 'opacity-50 pointer-events-none' : 'border-black/5 hover:border-black/20'}`}>
+            <div className={`hex-card p-1 border-dashed border-2 transition-all ease-in relative cursor-pointer group animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-200 ${isProcessing ? 'opacity-50 pointer-events-none' : 'border-black/5 hover:border-black/20'}`}>
             <input 
               type="file" 
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -267,7 +302,7 @@ export default function App() {
               disabled={isProcessing}
             />
             <div className="p-24 text-center space-y-8">
-              <div className="w-16 h-16 bg-[#F7F6F4] border border-black/5 rounded-2xl flex items-center justify-center mx-auto text-[#121317] group-hover:scale-105 transition-transform">
+              <div className="w-16 h-16 bg-[#F7F6F4] border border-black/5 rounded-2xl flex items-center justify-center mx-auto text-[#121317] group-hover:scale-105 transition-transform ease-in">
                 <Icons.Lock />
               </div>
               <div className="space-y-2">
@@ -287,13 +322,13 @@ export default function App() {
           )}
 
           {verificationResult && !isProcessing && (
-            <div className={`hex-card p-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ${
+            <div className={`hex-card p-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-in ${
               verificationResult.verdict === Verdict.VERIFIED ? 'border-green-100' : 
               verificationResult.verdict === Verdict.ALTERED ? 'border-amber-100' : 'border-red-100'
             }`}>
-              <div className="space-y-12">
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2">
+                <div className="space-y-12 animate-in fade-in duration-500 ease-in delay-100">
+                  <div className="flex justify-between items-start animate-in fade-in slide-in-from-left-2 duration-500 ease-in delay-200">
+                    <div className="space-y-2 animate-in fade-in duration-400 ease-in delay-300">
                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-[0.2em] uppercase ${
                       verificationResult.verdict === Verdict.VERIFIED ? 'bg-green-100 text-green-800' : 
                       verificationResult.verdict === Verdict.ALTERED ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
@@ -302,14 +337,14 @@ export default function App() {
                     </span>
                     <h3 className="text-3xl font-bold text-[#121317]">Forensic Results</h3>
                   </div>
-                  <div className="text-right">
+                    <div className="text-right animate-in fade-in duration-400 ease-in delay-400">
                     <p className="text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.2em]">Confidence</p>
                     <p className="text-5xl font-black text-[#121317]">{(verificationResult.confidence * 100).toFixed(0)}%</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-                  <div className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-16 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-500">
+                    <div className="space-y-5 animate-in fade-in duration-400 ease-in delay-600">
                     <div className="flex justify-between items-center text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.3em]">
                       <span>Signature Check</span>
                       <span className={verificationResult.signatureScore > 90 ? 'text-green-700' : 'text-red-700'}>
@@ -318,12 +353,12 @@ export default function App() {
                     </div>
                     <div className="h-1 w-full bg-black/5 rounded-full overflow-hidden">
                       <div 
-                        className={`h-full transition-all duration-1000 ${verificationResult.signatureScore > 90 ? 'bg-green-600' : 'bg-red-600'}`}
+                        className={`h-full transition-all ease-in duration-1000 ${verificationResult.signatureScore > 90 ? 'bg-green-600' : 'bg-red-600'}`}
                         style={{ width: `${verificationResult.signatureScore}%` }}
                       ></div>
                     </div>
                   </div>
-                  <div className="space-y-5">
+                    <div className="space-y-5 animate-in fade-in duration-400 ease-in delay-700">
                     <div className="flex justify-between items-center text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.3em]">
                       <span>Content Integrity</span>
                       <span className={verificationResult.integrityScore > 90 ? 'text-green-700' : 'text-amber-700'}>
@@ -332,14 +367,14 @@ export default function App() {
                     </div>
                     <div className="h-1 w-full bg-black/5 rounded-full overflow-hidden">
                       <div 
-                        className={`h-full transition-all duration-1000 ${verificationResult.integrityScore > 90 ? 'bg-green-600' : 'bg-amber-600'}`}
+                        className={`h-full transition-all ease-in duration-1000 ${verificationResult.integrityScore > 90 ? 'bg-green-600' : 'bg-amber-600'}`}
                         style={{ width: `${verificationResult.integrityScore}%` }}
                       ></div>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-10 border-t border-black/5">
+                  <div className="pt-10 border-t border-black/5 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-800">
                   <h4 className="text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.3em] mb-6">Gemini Forensic Insight</h4>
                   <p className="text-xl leading-relaxed text-[#2B2D33] font-medium serif-italic">"{verificationResult.explanation}"</p>
                   

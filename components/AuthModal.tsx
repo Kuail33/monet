@@ -66,7 +66,7 @@ export const AuthModal = ({ isOpen, onClose, onLogin }: AuthModalProps) => {
       <div className="relative w-full max-w-md hex-card p-12 bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-300">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 text-[#6B6F76] hover:text-[#121317] transition-colors"
+          className="absolute top-6 right-6 text-[#6B6F76] hover:text-[#121317] transition-colors ease-in"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -111,7 +111,7 @@ export const AuthModal = ({ isOpen, onClose, onLogin }: AuthModalProps) => {
             <button 
               onClick={handleEmailAuth}
               disabled={isLoading || !email.trim() || !password.trim()}
-              className="w-full px-6 py-4 bg-[#121317] border border-[#121317] rounded-lg text-sm font-semibold text-white hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-4 bg-[#121317] border border-[#121317] rounded-lg text-sm font-semibold text-white hover:bg-black transition-all ease-in disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Signing in...' : isSignUp ? 'Create Account' : 'Sign In'}
             </button>
@@ -119,7 +119,7 @@ export const AuthModal = ({ isOpen, onClose, onLogin }: AuthModalProps) => {
             <button 
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white border border-black/10 rounded-lg text-sm font-semibold text-[#121317] hover:bg-[#F7F6F4] transition-all disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white border border-black/10 rounded-lg text-sm font-semibold text-[#121317] hover:bg-[#F7F6F4] transition-all ease-in disabled:opacity-50"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -133,7 +133,7 @@ export const AuthModal = ({ isOpen, onClose, onLogin }: AuthModalProps) => {
 
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm text-[#6B6F76] hover:text-[#121317] transition-colors"
+            className="text-sm text-[#6B6F76] hover:text-[#121317] transition-colors ease-in"
           >
             {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
           </button>

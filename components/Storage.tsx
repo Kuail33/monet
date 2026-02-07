@@ -19,22 +19,23 @@ export const Storage: React.FC<StorageProps> = ({
   setActiveView 
 }) => {
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-black/5 pb-8">
-        <div className="space-y-3">
+      <div className="space-y-12 animate-in fade-in slide-in-from-top-4 duration-700 ease-in">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-black/5 pb-8 animate-in fade-in slide-in-from-top-2 duration-500 ease-in delay-100">
+          <div className="space-y-3 animate-in fade-in slide-in-from-left-2 duration-500 ease-in delay-200">
           <h2 className="text-4xl font-bold tracking-tight text-[#121317]">Storage & History</h2>
           <p className="text-[#6B6F76] text-lg font-medium">Your cryptographic ledger of provenance and forensic audits.</p>
         </div>
-        <div className="flex gap-4">
+          <div className="flex gap-4 animate-in fade-in slide-in-from-right-2 duration-500 ease-in delay-300">
           <button 
             onClick={() => setActiveView('signed')}
-            className={`px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeView === 'signed' ? 'border-[#121317] text-[#121317]' : 'border-transparent text-[#6B6F76] hover:text-[#121317]'}`}
+            className={`px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all ease-in border-b-2 ${activeView === 'signed' ? 'border-[#121317] text-[#121317]' : 'border-transparent text-[#6B6F76] hover:text-[#121317]'}`}
           >
             Signed Assets
+            
           </button>
           <button 
             onClick={() => setActiveView('forensics')}
-            className={`px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeView === 'forensics' ? 'border-[#121317] text-[#121317]' : 'border-transparent text-[#6B6F76] hover:text-[#121317]'}`}
+            className={`px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all ease-in border-b-2 ${activeView === 'forensics' ? 'border-[#121317] text-[#121317]' : 'border-transparent text-[#6B6F76] hover:text-[#121317]'}`}
           >
             Forensic Logs
           </button>
@@ -42,21 +43,21 @@ export const Storage: React.FC<StorageProps> = ({
       </div>
 
       {activeView === 'signed' ? (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-400">
           {assets.length === 0 ? (
-            <div className="hex-card p-40 text-center text-[#6B6F76] space-y-6 border-dashed">
+            <div className="hex-card p-40 text-center text-[#6B6F76] space-y-6 border-dashed animate-in fade-in zoom-in-95 duration-500 ease-in delay-500">
               <div className="w-16 h-16 border border-black/5 rounded-2xl flex items-center justify-center mx-auto opacity-40">
                 <Icons.Layout />
               </div>
               <div className="space-y-2">
                 <p className="text-[10px] font-bold uppercase tracking-[0.4em]">No signed works found</p>
-                <button onClick={onNewSign} className="text-xs font-bold text-[#121317] underline decoration-black/20 hover:decoration-black transition-all">
+                <button onClick={onNewSign} className="text-xs font-bold text-[#121317] underline decoration-black/20 hover:decoration-black transition-all ease-in">
                   Sign your first asset
                 </button>
               </div>
             </div>
           ) : (
-            <div className="hex-card overflow-hidden">
+            <div className="hex-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 ease-in delay-500">
               <table className="w-full text-left">
                 <thead className="bg-[#F7F6F4] text-[10px] text-[#6B6F76] font-bold uppercase tracking-[0.3em] border-b border-black/5">
                   <tr>
@@ -68,7 +69,7 @@ export const Storage: React.FC<StorageProps> = ({
                 </thead>
                 <tbody className="divide-y divide-black/5">
                   {assets.map(asset => (
-                    <tr key={asset.id} className="hover:bg-black/[0.01] transition-colors group">
+                    <tr key={asset.id} className="hover:bg-black/[0.01] transition-colors ease-in group">
                       <td className="py-6 px-10">
                         <div className="flex items-center gap-4">
                           <div className="w-8 h-8 border border-black/5 rounded-lg bg-white flex items-center justify-center text-[#6B6F76]">
@@ -92,7 +93,7 @@ export const Storage: React.FC<StorageProps> = ({
                         </div>
                       </td>
                       <td className="py-6 px-10 text-right">
-                        <a href={asset.url} download className="text-[10px] font-bold text-[#6B6F76] hover:text-[#121317] underline transition-all">Export</a>
+                        <a href={asset.url} download className="text-[10px] font-bold text-[#6B6F76] hover:text-[#121317] underline transition-all ease-in">Export</a>
                       </td>
                     </tr>
                   ))}
@@ -102,16 +103,16 @@ export const Storage: React.FC<StorageProps> = ({
           )}
         </div>
       ) : (
-        <div className="space-y-8">
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-400">
           {verifications.length === 0 ? (
-            <div className="hex-card p-40 text-center text-[#6B6F76] space-y-6 border-dashed">
+            <div className="hex-card p-40 text-center text-[#6B6F76] space-y-6 border-dashed animate-in fade-in zoom-in-95 duration-500 ease-in delay-500">
               <div className="w-16 h-16 border border-black/5 rounded-2xl flex items-center justify-center mx-auto opacity-40">
                 <Icons.Lock />
               </div>
               <p className="text-[10px] font-bold uppercase tracking-[0.4em]">No forensic logs yet</p>
             </div>
           ) : (
-            <div className="hex-card overflow-hidden">
+            <div className="hex-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 ease-in delay-500">
               <table className="w-full text-left">
                 <thead className="bg-[#F7F6F4] text-[10px] text-[#6B6F76] font-bold uppercase tracking-[0.3em] border-b border-black/5">
                   <tr>
@@ -123,7 +124,7 @@ export const Storage: React.FC<StorageProps> = ({
                 </thead>
                 <tbody className="divide-y divide-black/5">
                   {verifications.map(log => (
-                    <tr key={log.id} className="hover:bg-black/[0.01] transition-colors group">
+                    <tr key={log.id} className="hover:bg-black/[0.01] transition-colors ease-in group">
                       <td className="py-6 px-10">
                         <div>
                           <p className="text-sm font-bold text-[#121317]">{log.fileName}</p>
