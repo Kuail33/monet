@@ -56,6 +56,21 @@ export default function App() {
     }
   }, [activeTab]);
 
+  // Logout when user exits/closes the page
+  useEffect(() => {
+    const handlePageHide = async (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        await auth.signOut();
+      }
+    };
+
+    window.addEventListener('pagehide', handlePageHide);
+    
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide);
+    };
+  }, []);
+
   const handleLoginTrigger = () => {
     if (isLoggedIn) {
       setActiveTab('protect');
@@ -168,6 +183,65 @@ export default function App() {
         </button>
       </div>
     );
+  };
+
+  const parseInsight = (text: string) => {
+    const analysisMatch = text.match(/Analysis:\s*([^\.]+)/i);
+    const signatureMatch = text.match(/Signature\s*([^\.]+)/i);
+    const integrityMatch = text.match(/Integrity\s*([^\.]+)/i);
+
+    return {
+      analysis: analysisMatch?.[1]?.trim() ?? text.trim(),
+      signature: signatureMatch?.[1]?.trim() ?? '',
+      integrity: integrityMatch?.[1]?.trim() ?? ''
+    };
+  };
+
+  const formatInsightValue = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return trimmed;
+    if (/^(verified|unverified)$/i.test(trimmed)) {
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+    }
+    const lower = trimmed.toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  };
+
+  const formatPercent = (value: number) => {
+    const fixed = value.toFixed(2);
+    return fixed.replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
+  };
+
+  const extractPercent = (value: string) => {
+    const match = value.match(/\d+(?:\.\d+)?%/);
+    return match ? match[0] : value;
+  };
+
+  const getInsightSummary = (verdict: Verdict, signatureScore: number, integrityScore: number) => {
+    const sigLow = signatureScore < 50;
+    const intLow = integrityScore < 50;
+
+    if (verdict === Verdict.VERIFIED) {
+      return 'This appears to be an original work with a strong signature and intact integrity.';
+    }
+
+    if (verdict === Verdict.ALTERED) {
+      return 'This appears to be a modified work with partial signature validity and reduced integrity.';
+    }
+
+    if (sigLow && intLow) {
+      return 'This does not appear to be an original work and likely lacks a valid signature and integrity match.';
+    }
+
+    if (sigLow) {
+      return 'This work likely lacks a valid signature, suggesting it is not the original source.';
+    }
+
+    if (intLow) {
+      return 'This work shows integrity mismatches, suggesting it may not be the original file.';
+    }
+
+    return 'This work shows mixed signals and may not match the original records.';
   };
 
   const renderBackButton = () => {
@@ -322,6 +396,7 @@ export default function App() {
           )}
 
           {verificationResult && !isProcessing && (
+            <>
             <div className={`hex-card p-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-in ${
               verificationResult.verdict === Verdict.VERIFIED ? 'border-green-100' : 
               verificationResult.verdict === Verdict.ALTERED ? 'border-amber-100' : 'border-red-100'
@@ -335,7 +410,7 @@ export default function App() {
                     }`}>
                       {verificationResult.verdict}
                     </span>
-                    <h3 className="text-3xl font-bold text-[#121317]">Forensic Results</h3>
+                    <h3 className="text-3xl font-bold text-[#121317]">Forensic Result</h3>
                   </div>
                     <div className="text-right animate-in fade-in duration-400 ease-in delay-400">
                     <p className="text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.2em]">Confidence</p>
@@ -345,7 +420,7 @@ export default function App() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-16 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-500">
                     <div className="space-y-5 animate-in fade-in duration-400 ease-in delay-600">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.3em]">
+                    <div className="flex justify-between items-center text-[12px] font-bold text-[#6B6F76] uppercase tracking-[0.3em]">
                       <span>Signature Check</span>
                       <span className={verificationResult.signatureScore > 90 ? 'text-green-700' : 'text-red-700'}>
                         {verificationResult.signatureScore}%
@@ -359,7 +434,7 @@ export default function App() {
                     </div>
                   </div>
                     <div className="space-y-5 animate-in fade-in duration-400 ease-in delay-700">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.3em]">
+                    <div className="flex justify-between items-center text-[12px] font-bold text-[#6B6F76] uppercase tracking-[0.3em]">
                       <span>Content Integrity</span>
                       <span className={verificationResult.integrityScore > 90 ? 'text-green-700' : 'text-amber-700'}>
                         {verificationResult.integrityScore}%
@@ -375,8 +450,40 @@ export default function App() {
                 </div>
 
                   <div className="pt-10 border-t border-black/5 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-800">
-                  <h4 className="text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.3em] mb-6">Gemini Forensic Insight</h4>
-                  <p className="text-xl leading-relaxed text-[#2B2D33] font-medium serif-italic">"{verificationResult.explanation}"</p>
+                  <h4 className="text-[12px] font-bold text-[#6B6F76] uppercase tracking-[0.3em] mb-6"> Gemini Forensic Insight</h4>
+                  {(() => {
+                    const insight = parseInsight(verificationResult.explanation);
+                    return (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-lg serif-italic">
+                        <div className="space-y-2">
+                          <div className="flex items-start gap-2">
+                            <span className="text-[12px] font-bold tracking-[0.2em] text-[#6B6F76]">Analysis:</span>
+                            <span className="text-[#2B2D33] font-medium">{formatInsightValue(insight.analysis)}</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-[12px] font-bold tracking-[0.2em] text-[#6B6F76]">Validity:</span>
+                            <span className="text-[#2B2D33] font-medium">
+                              {formatInsightValue(extractPercent(insight.signature || `${formatPercent(verificationResult.signatureScore)}%`))}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-start gap-2">
+                            <span className="text-[12px] font-bold tracking-[0.2em] text-[#6B6F76]"> Matching: </span>
+                            <span className="text-[#2B2D33] font-medium">
+                              {formatInsightValue(extractPercent(insight.integrity || `${formatPercent(verificationResult.integrityScore)}%`))}
+                            </span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-[12px] font-bold  tracking-[0.2em] text-[#6B6F76]">Confidence:</span>
+                            <span className="text-[#2B2D33] font-medium">
+                              {extractPercent(`${formatPercent(verificationResult.confidence * 100)}%`)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                   
                   {verificationResult.watermarkId && (
                     <div className="mt-8 flex items-center gap-3">
@@ -389,6 +496,22 @@ export default function App() {
                 </div>
               </div>
             </div>
+            <div className={`hex-card p-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-in ${
+              verificationResult.verdict === Verdict.VERIFIED ? 'border-green-100' : 
+              verificationResult.verdict === Verdict.ALTERED ? 'border-amber-100' : 'border-red-100'
+            }`}>
+              <div className="space-y-3">
+                <h4 className="text-[12px] font-bold text-[#6B6F76] uppercase tracking-[0.3em]"> Summary</h4>
+                <p className="text-lg serif-italic text-[#2B2D33] font-medium">
+                  {getInsightSummary(
+                    verificationResult.verdict,
+                    verificationResult.signatureScore,
+                    verificationResult.integrityScore
+                  )}
+                </p>
+              </div>
+            </div>
+            </>
           )}
         </div>
       )}

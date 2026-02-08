@@ -73,12 +73,12 @@ export const AuthModal = ({ isOpen, onClose, onLogin }: AuthModalProps) => {
 
         <div className="text-center space-y-8">
           <div className="flex justify-center">
-            <div className="w-12 h-12 bg-[#121317] flex items-center justify-center text-white font-black tracking-tighter text-2xl rounded-sm">A</div>
+            <img src="/icons/icon.png" alt="Logo" className="w-12 h-12 object-contain" />
           </div>
           
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-[#121317]">Secure your identity</h2>
-            <p className="text-sm text-[#6B6F76] font-medium">Sign {isSignUp ? 'up' : 'in'} to AuthMark to protect your creative work.</p>
+            <h2 className="text-2xl font-bold text-[#121317]"> Have an account? </h2>
+            <p className="text-sm text-[#6B6F76] font-medium"> {isSignUp ? 'Sign up' : 'Log in'} to protect your creative work</p>
           </div>
 
           {error && (
@@ -113,7 +113,7 @@ export const AuthModal = ({ isOpen, onClose, onLogin }: AuthModalProps) => {
               disabled={isLoading || !email.trim() || !password.trim()}
               className="w-full px-6 py-4 bg-[#121317] border border-[#121317] rounded-lg text-sm font-semibold text-white hover:bg-black transition-all ease-in disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Signing in...' : isSignUp ? 'Create Account' : 'Sign In'}
+              {isLoading ? 'Signing in...' : isSignUp ? 'Create account' : 'Log in'}
             </button>
             
             <button 

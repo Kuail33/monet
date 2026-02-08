@@ -29,9 +29,10 @@ export const LandingPage = ({ onStart, onLogin, isLoggedIn }: LandingPageProps) 
         </h1>
         
         <p className="cinetype-light md:text-[17px] text-[#6B6F76] max-w-3xl mx-auto leading-relaxed mt-1 mb-8 tracking-[0.01em] opacity-90 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-300">
-          Invisible AI forensics that authenticate your work
-          <br />
           In a world of copies, prove the original
+          
+          <br />
+          AI powered forensics that authenticate your work
         </p>
         
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-0 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in delay-400">
@@ -63,12 +64,12 @@ export const LandingPage = ({ onStart, onLogin, isLoggedIn }: LandingPageProps) 
         {[
           {
             title: <span className="serif-italic"> {`Authorship Proof`} </span>,
-            desc: "Embed an unforgeable identity signature directly into media binaries. Cryptographically secure",
+            desc: "Embed an unforgeable identity signature Cryptographically secure",
             icon: <Icons.CheckCircle />
           },
           {
             title: <span className="serif-italic"> {`Tamper Detection`} </span>,
-            desc: "Our engine detects byte-level deviations. Detect unauthorized re-encodings with extreme precision",
+            desc: "Our engine detects byte-level deviations Detect unauthorized re-encodings with extreme precision",
             icon: <Icons.AlertTriangle />
           },
           {
@@ -95,9 +96,6 @@ export const LandingPage = ({ onStart, onLogin, isLoggedIn }: LandingPageProps) 
     ))}
         </section>
 
-      <section className="text-center py-20">
-        <p className="text-[10px] font-bold text-[#6B6F76] uppercase tracking-[0.4em] opacity-60">Conversational self-serve platform</p>
-      </section>
     </div>
   );
 };
