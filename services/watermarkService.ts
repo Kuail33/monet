@@ -1,13 +1,13 @@
 
-import { AuthMarkPayload, Verdict, VerificationResult } from '../types';
+import { MonetPayload, Verdict, VerificationResult } from '../types';
 
 /**
  * SIMULATED WATERMARK SERVICE
  * In a real app, this happens on a secure FastAPI backend.
  */
 
-const PAYLOAD_BEGIN_STR = "AUTHMARK_PAYLOAD_BEGIN:";
-const PAYLOAD_END_STR = ":AUTHMARK_PAYLOAD_END";
+const PAYLOAD_BEGIN_STR = "MONET_PAYLOAD_BEGIN:";
+const PAYLOAD_END_STR = ":MONET_PAYLOAD_END";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -22,7 +22,7 @@ const generateHashFromBuffer = async (buffer: ArrayBuffer): Promise<string> => {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 };
 
-const generateSignature = (payload: AuthMarkPayload): string => {
+const generateSignature = (payload: MonetPayload): string => {
   const str = JSON.stringify(payload);
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -51,13 +51,13 @@ function lastIndexOfBytes(data: Uint8Array, search: Uint8Array): number {
   return -1;
 }
 
-export const embedWatermark = async (file: File, userId: string): Promise<{ watermarkedBlob: Blob, payload: AuthMarkPayload }> => {
+export const embedWatermark = async (file: File, userId: string): Promise<{ watermarkedBlob: Blob, payload: MonetPayload }> => {
   const originalBuffer = await file.arrayBuffer();
   const sha = await generateHashFromBuffer(originalBuffer);
   
   const wid = `WMK_${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
   
-  const payload: AuthMarkPayload = {
+  const payload: MonetPayload = {
     v: 1,
     wid,
     uid: userId,
@@ -89,7 +89,7 @@ export const verifyFile = async (file: File): Promise<VerificationResult> => {
       confidence: 0,
       signatureScore: 0,
       integrityScore: 0,
-      explanation: "No AuthMark watermark detected in the binary data.",
+      explanation: "No Monet watermark detected in the binary data.",
       evidence: { sigValid: false, hashMatch: false }
     };
   }
@@ -98,14 +98,14 @@ export const verifyFile = async (file: File): Promise<VerificationResult> => {
     // Extract the JSON payload part
     const jsonBytes = fullArray.slice(beginIndex + PAYLOAD_BEGIN_BYTES.length, endIndex);
     const jsonStr = decoder.decode(jsonBytes);
-    const extracted: AuthMarkPayload = JSON.parse(jsonStr);
+    const extracted: MonetPayload = JSON.parse(jsonStr);
     
     // FORENSIC STEP: Isolate the media content (everything before the watermark)
     const mediaContentBuffer = fullBuffer.slice(0, beginIndex);
     const currentMediaHash = await generateHashFromBuffer(mediaContentBuffer);
 
     const { sig, ...payloadWithoutSig } = extracted;
-    const recalculatedSig = generateSignature(payloadWithoutSig as AuthMarkPayload);
+    const recalculatedSig = generateSignature(payloadWithoutSig as MonetPayload);
     const sigValid = sig === recalculatedSig;
     
     // Exact byte-level comparison

@@ -156,7 +156,7 @@ export const Layout: React.FC<LayoutProps> = ({
                   <div className="h-px bg-black/5 my-1"></div>
                   
                   <a 
-                    href="mailto:support@authmark.ai"
+                    href="mailto:support@monet.ai"
                     className="w-full text-left px-4 py-2 text-xs font-bold text-[#2B2D33] hover:bg-[#F7F6F4] hover:text-[#121317] transition-colors ease-in flex items-center gap-3"
                   >
                     <Icons.Layout />

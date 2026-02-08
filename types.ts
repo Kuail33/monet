@@ -6,7 +6,7 @@ export enum Verdict {
   INVALID = 'INVALID'
 }
 
-export interface AuthMarkPayload {
+export interface MonetPayload {
   v: number;
   wid: string;
   uid: string;

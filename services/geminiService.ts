@@ -11,7 +11,7 @@ export const generateVerificationReport = async (result: VerificationResult): Pr
   }
 
   const prompt = `
-    As a Senior Digital Forensic Specialist for AuthMark, generate a verification summary.
+    As a Senior Digital Forensic Specialist for Monet, generate a verification summary.
     
     FORENSIC DATA:
     - Verdict: ${result.verdict}
