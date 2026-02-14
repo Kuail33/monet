@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Icons } from '../constants';
-import { PixelatedSpark } from './PixelatedSpark';
 
 interface LandingPageProps {
   onStart: (tab: string) => void;
@@ -8,6 +7,27 @@ interface LandingPageProps {
   isLoggedIn: boolean;
 }
 export const LandingPage = ({ onStart, onLogin, isLoggedIn }: LandingPageProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const featuresRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (featuresRef.current) {
+      observer.observe(featuresRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
      <div className="space-y-40 animate-in fade-in duration-700 ease-in">
       
@@ -58,43 +78,67 @@ export const LandingPage = ({ onStart, onLogin, isLoggedIn }: LandingPageProps) 
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-5xl mx-auto px-8 py-16 border border-black/10 rounded-lg animate-in fade-in slide-in-from-bottom-4 duration-700 ease-in delay-500">
-        
-        {/* Features Section */}
+      {/* Features Section */}
+      <section 
+        ref={featuresRef}
+        className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto px-8 py-16 border border-black/10 rounded-lg animate-in fade-in slide-in-from-bottom-4 duration-700 ease-in delay-500"
+      >
         {[
           {
-            title: <span className="serif-italic"> {`Authorship Proof`} </span>,
-            desc: "Embed an unforgeable identity signature Cryptographically secure",
+            title: "Immutable Authorship",
+            desc: "Embed a cryptographically secure, unforgeable identity signature directly into your media",
             icon: <Icons.CheckCircle />
           },
           {
-            title: <span className="serif-italic"> {`Tamper Detection`} </span>,
-            desc: "Our engine detects byte-level deviations Detect unauthorized re-encodings with extreme precision",
+            title: "Tamper Detection",
+            desc: "Detect byte-level deviations and unauthorized re-encodings with forensic precision",
             icon: <Icons.AlertTriangle />
           },
           {
-            title: <span className="serif-italic"> {`Human Explanation`} </span>,
-            desc: "Gemini-driven reasoning translates hash data into intuitive forensic reports for everyone",
+            title: "Transparency",
+            desc: "AI-powered analysis translates complex hash data into clear, intuitive forensic reports",
             icon: <Icons.Layout />
           }
         ].map((f, i) => (
-      <div key={i} className="space-y-6 group animate-in fade-in slide-in-from-bottom-2 duration-500 ease-in" 
-      style={{ animationDelay: `${600 + i * 100}ms` }}>
+          <div 
+            key={i} 
+            className={`flex flex-col items-center text-center space-y-3 group transition-all duration-500 ease-out ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+            }`}
+            style={{ transitionDelay: isVisible ? `${i * 150}ms` : '0ms' }}
+          >
+            {/* Icon */}
+            <div 
+              className={`w-12 h-12 bg-[#F6EAEA] border border-[rgba(0,0,0,0.06)] rounded-xl flex items-center justify-center text-[#121317] hover:bg-white hover:border-[#E5BABA] transition-all ease-in duration-300 shadow-sm ${
+                isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              }`}
+              style={{ transitionDelay: isVisible ? `${100 + i * 150}ms` : '0ms' }}
+            >
+              {f.icon}
+            </div>
 
-        <div className="w-12 h-12 bg-[#F6EAEA] border border-[rgba(0,0,0,0.06)] rounded-xl flex items-center justify-center 
-        text-[#121317] hover:bg-white hover:border-[#E5BABA] transition-all ease-in duration-300 shadow-sm 
-        animate-in zoom-in-95 duration-400 ease-in" 
-        style={{ animationDelay: `${700 + i * 100}ms` }}>
-          {f.icon}
-        </div>
+            {/* Title */}
+            <h3 
+              className={`text-xl font-bold text-[#121317] tracking-wide italic serif-italic transition-all duration-500 ease-out ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: isVisible ? `${200 + i * 150}ms` : '0ms' }}
+            >
+              {f.title}
+            </h3>
 
-        <div className="space-y-3">
-          <h3 className="text-xl font-bold text-[#121317] tracking-wide italic">{f.title}</h3>
-          <p className="text-sm text-[#6B6F76] leading-relaxed" style={{ fontFamily: "'Open Sauce One', sans-serif", fontWeight: 300 }}>{f.desc}</p>
-        </div>
-      </div>
-    ))}
-        </section>
+            {/* Description */}
+            <p 
+              className={`text-sm text-[#6B6F76] leading-relaxed transition-all duration-500 ease-out ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ fontFamily: "'Open Sauce One', sans-serif", fontWeight: 300, transitionDelay: isVisible ? `${300 + i * 150}ms` : '0ms' }}
+            >
+              {f.desc}
+            </p>
+          </div>
+        ))}
+      </section>
 
     </div>
   );

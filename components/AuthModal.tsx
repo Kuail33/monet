@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Icons, APP_NAME } from '../constants';
 import { auth } from '../services/firebaseConfig';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
