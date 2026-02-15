@@ -1,4 +1,9 @@
-🏷 monet -- AI-Powered Digital Media Forensics
+
+## 🎨 Monet
+
+Monet — AI-Powered Digital Media Forensics
+
+---
 
 ## 🔎 What it does
 
@@ -10,85 +15,60 @@ Monet addresses this problem by combining cryptographic hashing with byte-level 
 
 Monet empowers creators, journalists, and everyday users with a tool that makes digital authenticity both secure and understandable.
 
-What your project is
+---
 
-What problem it solves
+## 💡 Inspiration
 
-Who it helps
+This project was inspired by a viral case on X in which a creator named Asami gained a massive following posting what later turned out to be AI-generated “art.” Because much of the content consisted of convincing thirst traps, we found the situation to be both funny and alarming, as many followers had paid for access to media they believed was authentic.
 
-Why it matters
+---
 
-This is your hook section. Make it compelling.
+## 🛠 How we built it
 
-💡 Inspiration
+Monet is built with a modular architecture separating signature embedding, verification, and AI reasoning layers.
 
-What motivated the project?
+- **Cryptographic Layer:** SHA-256 hashing combined with structured byte-level encoding to detect modifications.
+- **Backend:** Python with FastAPI to handle file processing and verification logic.
+- **Frontend:** React interface for media upload and report visualization.
+- **AI Integration:** Google Gemini generates structured forensic explanations from hash comparison results.
 
-Personal experience?
+Security and reliability were prioritized by isolating verification logic from user-facing components and designing clear separation between processing layers.
 
-Social issue?
+---
 
-Technical curiosity?
+## ⚔ Challenges we ran into
 
-Recent AI advancements?
+- Designing a signature embedding approach that preserves file integrity while remaining tamper-evident.
+- Preventing exposure of sensitive verification logic.
+- Translating cryptographic discrepancies into meaningful explanations without AI hallucination.
+- Managing API constraints while maintaining fast response times.
+- Working within limited hackathon time to balance security, usability, and AI integration.
 
-Judges care about story.
+---
 
-🛠 How we built it
+## 🏆 Accomplishments we’re proud of
 
-Explain:
+- Successfully embedding invisible digital signatures without degrading media quality.
+- Achieving reliable byte-level tamper detection.
+- Building an AI explanation layer that makes technical verification accessible.
+- Creating a clean and intuitive user interface under time constraints.
 
-Architecture
+---
 
-AI models used (Gemini, Claude, etc.)
+## 📚 What we learned
 
-Backend/frontend
+We learned how to bridge cryptography and AI in a cohesive system. Technically, we gained experience in modular backend design, API integration, and secure file handling.
 
-Any security or design decisions
+We also learned the importance of balancing technical rigor with accessibility — security tools must be understandable to be impactful.
 
-Keep it understandable — not too low-level.
+---
 
-⚔ Challenges we ran into
+## 🚀 What’s next for Monet
 
-Very important section.
-Talk about:
+- Support for additional media formats (video, audio, documents).
+- Real-time browser extension integration.
+- Scalable cloud deployment.
+- Partnerships with creators, journalists, and digital rights organizations.
+- Advanced tamper classification using machine learning.
 
-API limits
-
-Model hallucination
-
-Signature collision
-
-Deployment issues
-
-Time constraints
-
-Judges love honesty + technical struggle.
-
-🏆 Accomplishments we’re proud of
-
-What worked well?
-
-Clean UX?
-
-Accurate tamper detection?
-
-Fast inference?
-
-Creative AI use?
-
-📚 What we learned
-
-Technical + teamwork learnings.
-
-🚀 What’s next for [Project Name]
-
-Future roadmap:
-
-Scaling
-
-More file types
-
-Production deployment
-
-Real-world partnerships
+Monet is just the beginning of building trust back into digital ecosystems.
