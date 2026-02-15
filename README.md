@@ -1,11 +1,14 @@
-🏷 Project Title
+🏷 monet -- AI-Powered Digital Media Forensics
 
-Clear, short, memorable.
+## 🔎 What it does
 
-🔎 What it does
+Monet is an AI-powered forensic application that embeds invisible, tamper-evident signatures into digital media to verify authenticity and detect manipulation.
 
-2–4 paragraphs max.
-Explain:
+As AI-generated content and deepfakes become more advanced, verifying the originality of digital media has become increasingly difficult. Creators risk losing ownership of their work, while manipulated content fuels misinformation and reputational harm.
+
+Monet addresses this problem by combining cryptographic hashing with byte-level encoding to detect unauthorized modifications. When tampering is detected, Google Gemini translates raw hash discrepancies into clear, human-readable forensic reports.
+
+Monet empowers creators, journalists, and everyday users with a tool that makes digital authenticity both secure and understandable.
 
 What your project is
 
