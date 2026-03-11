@@ -25,6 +25,13 @@ This project was inspired by a viral case on X in which a creator named Asami ga
 
 ## 🛠 How we built it
 
+### Tech Stack
+![Tech Stack Diagram](./diagrams/techstack.png)
+
+### System Flow
+![Application Flow](./diagrams/flow.png)
+
+
 Monet is built with a modular architecture separating signature embedding, verification, and AI reasoning layers
 
 - **Cryptographic Layer:** SHA-256 hashing combined with structured byte-level encoding to detect modifications
@@ -70,6 +77,12 @@ We also learned the importance of balancing technical rigor with accessibility �
 - Scalable cloud deployment
 - Partnerships with creators, journalists, and digital rights organizations.
 - Advanced tamper classification using machine learning
+
+## 🎥 Demo Video
+
+[![Monet Demo Thumbnail](./diagrams/screen.png)](https://vimeo.com/1168582982)
+
+*Click the image above to watch the full demonstration on Vimeo, or [click here](https://vimeo.com/1168582982?share=copy&fl=sv&fe=ci#t=0).*
 
 ## 🔩 Installation
 
