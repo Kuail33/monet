@@ -18,6 +18,7 @@ dist-ssr
 .env*.local
 firebaseConfig.ts
 services/firebaseConfig.ts
+services/geminiService.ts
 
 # Editor directories and files
 .vscode/*
