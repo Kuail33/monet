@@ -46,7 +46,7 @@ export const generateVerificationReport = async (result: VerificationResult): Pr
   try {
     // Fix: Call generateContent directly with model name and prompt
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: prompt,
     });
 
